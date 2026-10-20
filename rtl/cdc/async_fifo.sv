@@ -38,9 +38,9 @@ module async_fifo #(
   endfunction
 
   always_comb begin
-    wr_bin_next  = wr_bin + ((wr_en && !full) ? 1'b1 : 1'b0);
+    wr_bin_next  = wr_bin + ((wr_en && !full) ? {{AW{1'b0}}, 1'b1} : '0);
     wr_gray_next = bin2gray(wr_bin_next);
-    rd_bin_next  = rd_bin + ((rd_en && !empty) ? 1'b1 : 1'b0);
+    rd_bin_next  = rd_bin + ((rd_en && !empty) ? {{AW{1'b0}}, 1'b1} : '0);
     rd_gray_next = bin2gray(rd_bin_next);
     full_next  = (wr_gray_next == {~rd_gray_w2[AW:AW-1], rd_gray_w2[AW-2:0]});
     empty_next = (rd_gray_next == wr_gray_r2);

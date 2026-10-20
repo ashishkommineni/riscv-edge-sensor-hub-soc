@@ -6,7 +6,7 @@ class soc_coverage extends uvm_subscriber #(soc_observation);
     option.per_instance=1;
     kind_cp: coverpoint sampled_kind;
     uart_cp: coverpoint sampled_value[7:0] iff (sampled_kind==OBS_UART) {
-      bins pass_chars[]={'P','A','S',8'h0a};
+      bins pass_chars[]={8'h50,8'h41,8'h53,8'h0a};
       bins other=default;
     }
     result_sign_cp: coverpoint sampled_value[31] iff (sampled_kind==OBS_RESULT);

@@ -40,7 +40,32 @@ module tb_ecc_sram_contention;
     cpu_req=1; cpu_we=0; cpu_addr=0;
     #1 if (cpu_rdata !== 32'haaaa5555) $fatal(1, "CPU-priority write was lost");
     if (cpu_unc || eng_unc) $fatal(1, "unexpected ECC error");
-    $display("ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried");
+
+    // A detected double-bit error must not block a complete overwrite: the new
+    // data replaces all protected bits and creates a fresh, valid codeword.
+    @(negedge clk); cpu_req=0; eng_req=0; inj_word=0; inj_mask=39'b11; inj_valid=1;
+    @(posedge clk);
+    @(negedge clk); inj_valid=0; cpu_req=1; cpu_we=0; cpu_addr=0;
+    #1 if (!cpu_unc) $fatal(1, "double-bit corruption was not detected");
+    cpu_we=1; cpu_wstrb=4'hf; cpu_wdata=32'hdeadbeef;
+    #1 if (!cpu_ready || cpu_unc) $fatal(1, "full overwrite incorrectly depended on old ECC");
+    @(posedge clk);
+    @(negedge clk); cpu_we=0;
+    #1 if (cpu_rdata !== 32'hdeadbeef || cpu_unc)
+      $fatal(1, "full overwrite did not restore a clean codeword");
+
+    // A partial write does need the old bytes. If they are uncorrectable, the
+    // request reports the error and leaves the corrupted codeword untouched.
+    @(negedge clk); cpu_req=0; inj_word=1; inj_mask=39'b11; inj_valid=1;
+    @(posedge clk);
+    @(negedge clk); inj_valid=0; cpu_req=1; cpu_we=1; cpu_addr=4;
+    cpu_wstrb=4'b0001; cpu_wdata=32'h000000aa;
+    #1 if (!cpu_ready || !cpu_unc) $fatal(1, "unsafe partial write was not rejected");
+    @(posedge clk);
+    @(negedge clk); cpu_we=0;
+    #1 if (!cpu_unc) $fatal(1, "partial write silently replaced an uncorrectable word");
+
+    $display("ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried ecc_overwrite=clean partial_uncorrectable=blocked");
     $finish;
   end
 endmodule

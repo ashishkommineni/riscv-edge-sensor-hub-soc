@@ -11,6 +11,7 @@ REQUIRED = [
     "rtl/accelerator/int8_dot_product.sv", "tb/tb_riscv_edge_sensor_hub.sv",
     "docs/specification.md", "docs/verification_plan.md", "docs/memory_map.md",
     "docs/verification_report.md", "assets/architecture.svg", "assets/waveform.svg",
+    "requirements-ci.txt", "scripts/uvm_syntax_check.py",
 ]
 
 missing = [name for name in REQUIRED if not (ROOT / name).is_file()]

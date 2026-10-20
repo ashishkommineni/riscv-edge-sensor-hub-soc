@@ -2,7 +2,8 @@
 `default_nettype none
 module boot_rom #(
   parameter int WORDS = 256,
-  parameter string HEX_FILE = "firmware/boot.hex"
+  parameter string HEX_FILE = "firmware/boot.hex",
+  localparam int AW = $clog2(WORDS)
 ) (
   input  logic [31:0] addr,
   output logic [31:0] rdata
@@ -14,7 +15,7 @@ module boot_rom #(
     $readmemh(HEX_FILE, mem);
   end
   always_comb begin
-    rdata = (addr[31:2] < WORDS) ? mem[addr[31:2]] : 32'h0010_0073;
+    rdata = (addr < (WORDS * 4)) ? mem[addr[AW+1:2]] : 32'h0010_0073;
   end
 endmodule
 `default_nettype wire
