@@ -1,0 +1,14 @@
+rtl/clock_reset/reset_sync.sv
+rtl/clock_reset/clock_gate.sv
+rtl/cdc/pulse_sync.sv
+rtl/cdc/async_fifo.sv
+rtl/peripherals/spi_sensor_rx.sv
+rtl/peripherals/uart_tx_mmio.sv
+rtl/memory/boot_rom.sv
+rtl/memory/ecc_sram.sv
+rtl/dma/sensor_dma.sv
+rtl/accelerator/int8_dot_product.sv
+rtl/irq/interrupt_controller.sv
+rtl/cpu/rv32i_control_core.sv
+rtl/soc/soc_assertions.sv
+rtl/soc/riscv_edge_sensor_hub_soc.sv
