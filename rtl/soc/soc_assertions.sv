@@ -22,7 +22,7 @@ module soc_assertions (
   end
 
   // A procedural bounded-liveness check keeps this release compatible with
-  // Verilator 5.020, which does not accept every ranged SVA delay construct.
+  // Portable tool release 5.020 does not accept every ranged SVA delay construct.
   always_ff @(posedge clk) begin
     if (rst_n)
       assert (!(cpu_req && !cpu_ready && (cpu_wait_cycles >= 7'd80)))
