@@ -2,10 +2,11 @@
 
 VERILATOR ?= verilator
 PYTHON ?= python3
-# Upper address/MMIO bits are intentionally unused at leaf blocks, and two
-# documented sequential blocks intentionally use blocking temporaries/reset RAM.
+# Upper address/MMIO bits are intentionally unused at leaf blocks; reset is
+# intentionally asynchronous at flops and synchronously observed by assertions;
+# two documented sequential blocks use blocking temporaries/reset RAM.
 VFLAGS := --timing --trace --assert -DENABLE_SVA -Wall -Wno-fatal \
-	-Wno-UNUSEDSIGNAL -Wno-BLKSEQ
+	-Wno-UNUSEDSIGNAL -Wno-BLKSEQ -Wno-SYNCASYNCNET
 
 all: check uvm-syntax lint sim sim-contention
 
