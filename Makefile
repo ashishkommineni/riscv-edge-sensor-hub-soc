@@ -1,10 +1,13 @@
-.PHONY: all check firmware reference structure lint sim sim-contention xcelium clean
+.PHONY: all check firmware reference structure uvm-syntax lint sim sim-contention xcelium clean
 
 VERILATOR ?= verilator
 PYTHON ?= python3
-VFLAGS := --timing --trace -Wall -Wno-fatal
+# Upper address/MMIO bits are intentionally unused at leaf blocks, and two
+# documented sequential blocks intentionally use blocking temporaries/reset RAM.
+VFLAGS := --timing --trace --assert -DENABLE_SVA -Wall -Wno-fatal \
+	-Wno-UNUSEDSIGNAL -Wno-BLKSEQ
 
-all: check lint sim sim-contention
+all: check uvm-syntax lint sim sim-contention
 
 check: firmware reference structure
 
@@ -16,6 +19,9 @@ reference:
 
 structure:
 	$(PYTHON) scripts/structure_check.py
+
+uvm-syntax:
+	$(PYTHON) scripts/uvm_syntax_check.py
 
 lint:
 	$(VERILATOR) --lint-only $(VFLAGS) --top-module riscv_edge_sensor_hub_soc -f sim/rtl.f

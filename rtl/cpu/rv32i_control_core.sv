@@ -137,8 +137,8 @@ module rv32i_control_core (
             7'b0010011: begin // OP-IMM
               unique case (funct3)
                 3'b000: alu_result = regs[rs1] + imm_i;
-                3'b010: alu_result = ($signed(regs[rs1]) < $signed(imm_i));
-                3'b011: alu_result = (regs[rs1] < imm_i);
+                3'b010: alu_result = {31'b0, ($signed(regs[rs1]) < $signed(imm_i))};
+                3'b011: alu_result = {31'b0, (regs[rs1] < imm_i)};
                 3'b100: alu_result = regs[rs1] ^ imm_i;
                 3'b110: alu_result = regs[rs1] | imm_i;
                 3'b111: alu_result = regs[rs1] & imm_i;
@@ -155,8 +155,8 @@ module rv32i_control_core (
               unique case (funct3)
                 3'b000: alu_result = funct7[5] ? (regs[rs1] - regs[rs2]) : (regs[rs1] + regs[rs2]);
                 3'b001: alu_result = regs[rs1] << regs[rs2][4:0];
-                3'b010: alu_result = ($signed(regs[rs1]) < $signed(regs[rs2]));
-                3'b011: alu_result = (regs[rs1] < regs[rs2]);
+                3'b010: alu_result = {31'b0, ($signed(regs[rs1]) < $signed(regs[rs2]))};
+                3'b011: alu_result = {31'b0, (regs[rs1] < regs[rs2])};
                 3'b100: alu_result = regs[rs1] ^ regs[rs2];
                 3'b101: alu_result = funct7[5] ? ($signed(regs[rs1]) >>> regs[rs2][4:0])
                                                : (regs[rs1] >> regs[rs2][4:0]);

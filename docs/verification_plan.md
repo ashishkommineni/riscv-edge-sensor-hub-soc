@@ -18,7 +18,8 @@
 | E2E-01 | Samples 1..8 | Result -10, UART PASS | Portable SV + Python |
 | ECC-01 | Flip one protected data bit | Corrected pulse, result unchanged | Portable SV + Python |
 | ECC-02 | Flip each of 39 codeword bits | All correctable | Python exhaustive loop |
-| ECC-03 | Representative double-bit flips | Uncorrectable, never reported corrected | Python; RTL negative test planned |
+| ECC-03 | Representative double-bit flips | Uncorrectable, never reported corrected | Python + portable SV |
+| ECC-04 | Full/partial write after double-bit fault | Full overwrite repairs; unsafe partial write is blocked | Portable SV |
 | DMA-01 | Empty FIFO while active | Wait without underflow/pop | Portable end-to-end behavior |
 | DMA-02 | One pop per byte | Eight committed words | DMA FSM + result check |
 | IRQ-01 | Enabled DMA/accelerator/ECC source | Pending and `irq_o` observed | Portable SV |
@@ -33,8 +34,7 @@
 - Every CPU data request receives a response within 80 system clocks.
 - DMA transferred count is monotonic while active.
 - CPU and engine never commit competing memory writes.
-- Cover properties require a multi-cycle DMA active window and an accelerator
-  start-to-finish interval.
+- Cover properties observe CPU backpressure plus DMA and accelerator activity.
 
 Assertions are compiled with `+define+ENABLE_SVA` in the Xcelium target. Portable
 functional gates remain active even if a simulator does not support full SVA.

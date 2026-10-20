@@ -122,18 +122,24 @@ module ecc_sram #(
 
   dec_t cpu_dec, eng_dec;
   logic [$clog2(WORDS)-1:0] cpu_idx, eng_idx;
+  logic cpu_needs_old_data, eng_needs_old_data;
   assign cpu_idx = cpu_addr[$clog2(WORDS)+1:2];
   assign eng_idx = eng_addr[$clog2(WORDS)+1:2];
 
   always_comb begin
     cpu_dec = decode(mem[cpu_idx]);
     eng_dec = decode(mem[eng_idx]);
+    cpu_needs_old_data = !cpu_we || (cpu_wstrb != 4'hf);
+    eng_needs_old_data = !eng_we || (eng_wstrb != 4'hf);
     cpu_rdata = cpu_dec.data;
     eng_rdata = eng_dec.data;
-    cpu_corrected = cpu_req && cpu_dec.corrected;
-    cpu_uncorrectable = cpu_req && cpu_dec.uncorrectable;
-    eng_corrected = eng_req && eng_dec.corrected;
-    eng_uncorrectable = eng_req && eng_dec.uncorrectable;
+    // A full-word write replaces the complete codeword and therefore does not
+    // depend on the old ECC state. Partial writes must decode old bytes; reject
+    // an uncorrectable word instead of acknowledging a silently mutated write.
+    cpu_corrected = cpu_req && cpu_needs_old_data && cpu_dec.corrected;
+    cpu_uncorrectable = cpu_req && cpu_needs_old_data && cpu_dec.uncorrectable;
+    eng_corrected = eng_req && eng_needs_old_data && eng_dec.corrected;
+    eng_uncorrectable = eng_req && eng_needs_old_data && eng_dec.uncorrectable;
     // Fault injection is an out-of-band debug operation. Stall both clients for
     // that cycle so a normal access is never acknowledged and then discarded by
     // the injection write's priority in the sequential block.
@@ -156,9 +162,11 @@ module ecc_sram #(
       if (inj_valid) begin
         mem[inj_word] <= mem[inj_word] ^ inj_mask;
       end else begin
-        if (cpu_req && cpu_we)
+        if (cpu_req && cpu_we &&
+            ((cpu_wstrb == 4'hf) || !cpu_dec.uncorrectable))
           mem[cpu_idx] <= encode(merge_bytes(cpu_dec.data, cpu_wdata, cpu_wstrb));
-        if (eng_req && eng_we && !(cpu_req && cpu_we))
+        if (eng_req && eng_we && !(cpu_req && cpu_we) &&
+            ((eng_wstrb == 4'hf) || !eng_dec.uncorrectable))
           mem[eng_idx] <= encode(merge_bytes(eng_dec.data, eng_wdata, eng_wstrb));
       end
     end

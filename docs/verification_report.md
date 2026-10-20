@@ -8,9 +8,10 @@
 | Firmware/MMIO reference execution | PASS, result `-10`, UART `PASS`, IRQ mask `0x1f` | `python3 scripts/reference_model.py` |
 | SECDED reference fault campaign | PASS, 195 single-bit corrections + 5 double-bit detections | `python3 scripts/reference_model.py` |
 | Repository structure gate | PASS, 16 portable RTL/TB files | `python3 scripts/structure_check.py` |
-| Verilator lint | PASS in GitHub Actions | `make lint` |
+| UVM source syntax | PASS, complete package/interface/top parse | `make uvm-syntax` |
+| Verilator lint + enabled SVA | PASS in GitHub Actions | `make lint` |
 | Verilator end-to-end simulation | PASS: result/UART/DMA/accelerator/IRQ/ECC gates | `make sim` |
-| ECC dual-writer contention test | PASS: CPU write preserved, engine retried | `make sim-contention` |
+| ECC contention/recovery test | PASS: arbitration, full repair, unsafe partial-write rejection | `make sim-contention` |
 | Xcelium UVM 1.2 | Not executed | `make xcelium` |
 | IMC coverage | Not generated | Run after Xcelium regression |
 | CDC/RDC sign-off | Not executed | Target technology/tool required |

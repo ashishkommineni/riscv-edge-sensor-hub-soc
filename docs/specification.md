@@ -49,7 +49,10 @@ IRQ is a verified external observation. The MVP CPU has no `mstatus`, `mie`, `mt
 - Six Hamming parity bits plus one overall parity bit form a 39-bit codeword.
 - A single codeword-bit error returns corrected data and pulses `corrected`.
 - A detected double-bit error pulses `uncorrectable`; consumers must reject it.
-- Byte writes perform decode–merge–encode.
+- Full-word writes replace the complete codeword and can safely repair a damaged
+  location without depending on the old ECC state.
+- Partial writes perform decode–merge–encode. An uncorrectable old codeword makes
+  the partial write fail without changing memory.
 - CPU write wins if CPU and engine attempt writes in the same cycle, and collision
   is asserted. The architecture sequences engines to prevent that case.
 - The simulation-only fault-injection port is used only while normal memory

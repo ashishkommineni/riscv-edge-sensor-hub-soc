@@ -103,10 +103,12 @@ See [`docs/memory_map.md`](docs/memory_map.md) for every register and access rul
 
 ## Run the portable checks
 
-Requirements: Python 3, GNU Make, and Verilator 5 or later for RTL simulation.
+Requirements: Python 3, GNU Make, Verilator 5 or later, and the pinned CI parser
+dependency installed with `python3 -m pip install -r requirements-ci.txt`.
 
 ```bash
 make check       # firmware freshness + executable reference/ECC model + structure
+make uvm-syntax  # parse the complete UVM source tree (syntax only)
 make lint        # Verilator RTL lint
 make sim         # build and run the self-checking SystemVerilog test
 make all         # all of the above
@@ -146,6 +148,10 @@ observed:
 - the corrected dot product is exactly `-10`;
 - the accepted UART byte stream is exactly `PASS\n`.
 
+A separate directed SRAM test also proves CPU/engine write arbitration, recovery
+by full-word overwrite after a double-bit fault, and rejection of a partial write
+that would otherwise depend on uncorrectable old data.
+
 The Python reference model independently interprets the checked-in machine code,
 models the MMIO sequence, and exhaustively flips every one of 39 bits for five
 representative SECDED codewords. It also checks double-bit detection. This catches
@@ -153,9 +159,12 @@ stale firmware, incorrect branches, inconsistent register addresses, and ECC
 equation mistakes before a simulator job.
 
 SVA in `rtl/soc/soc_assertions.sv` checks bounded CPU responses, monotonic DMA
-progress, and the absence of dual-writer memory collisions. The UVM environment
-adds constrained SPI items, an active agent, end-to-end scoreboard, coverage
-subscriber, and Xcelium top. Detailed targets and exclusions are in
+progress, and the absence of dual-writer memory collisions; the portable flow
+now enables those assertions. A pinned `pyslang` gate parses the complete UVM
+source tree, while the UVM environment adds constrained SPI items, an active
+agent, end-to-end scoreboard, coverage subscriber, and Xcelium top. Syntax
+parsing is not presented as Xcelium elaboration or execution. Detailed targets
+and exclusions are in
 [`docs/verification_plan.md`](docs/verification_plan.md).
 
 ## Repository structure
