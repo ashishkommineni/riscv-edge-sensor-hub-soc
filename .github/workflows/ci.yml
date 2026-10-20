@@ -1,0 +1,37 @@
+name: RTL and reference checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Verilator
+        run: sudo apt-get update && sudo apt-get install -y verilator
+      - name: Show tool versions
+        run: |
+          python3 --version
+          verilator --version
+      - name: Reference and structure checks
+        run: make check
+      - name: RTL lint
+        run: make lint
+      - name: End-to-end SoC simulation
+        run: make sim
+      - name: Memory contention simulation
+        run: make sim-contention
+      - name: Upload waveform
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: soc-waveform
+          path: results/soc.vcd
+          if-no-files-found: warn

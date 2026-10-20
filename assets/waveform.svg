@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Expected end-to-end timing sequence</title>
+  <desc id="desc">Conceptual timing shows reset, eight SPI bytes, DMA, ECC correction, accelerator completion, interrupt, UART bytes, and CPU halt.</desc>
+  <defs><style>.bg{fill:#0b1220}.grid{stroke:#26364b;stroke-width:1}.sig{stroke:#57d3ff;stroke-width:3;fill:none}.event{stroke:#62dfa8;stroke-width:3;fill:none}.warn{stroke:#ffca62;stroke-width:3;fill:none}.txt{fill:#dce7f3;font:14px system-ui,sans-serif}.label{fill:#f7fafc;font:600 15px system-ui,sans-serif}</style></defs>
+  <rect class="bg" width="1200" height="600" rx="18"/>
+  <text x="35" y="38" class="label" font-size="23">Expected sequence — conceptual, not cycle-scaled</text>
+  <g>
+    <line x1="190" y1="65" x2="1160" y2="65" class="grid"/><line x1="190" y1="125" x2="1160" y2="125" class="grid"/>
+    <line x1="190" y1="185" x2="1160" y2="185" class="grid"/><line x1="190" y1="245" x2="1160" y2="245" class="grid"/>
+    <line x1="190" y1="305" x2="1160" y2="305" class="grid"/><line x1="190" y1="365" x2="1160" y2="365" class="grid"/>
+    <line x1="190" y1="425" x2="1160" y2="425" class="grid"/><line x1="190" y1="485" x2="1160" y2="485" class="grid"/>
+  </g>
+  <text x="35" y="90" class="label">reset_n</text><path d="M190 100 H260 V72 H1160" class="sig"/>
+  <text x="35" y="150" class="label">SPI bytes</text><path d="M190 160 H300 l12 -25 12 25 12 -25 12 25 12 -25 12 25 12 -25 12 25 12 -25 12 25 12 -25 12 25 12 -25 12 25 12 -25 12 25 H1160" class="sig"/><text x="315" y="120" class="txt">1 2 3 4 5 6 7 8</text>
+  <text x="35" y="210" class="label">DMA active</text><path d="M190 220 H335 V192 H650 V220 H1160" class="event"/>
+  <text x="35" y="270" class="label">DMA done</text><path d="M190 280 H645 V252 H665 V280 H1160" class="event"/>
+  <text x="35" y="330" class="label">ECC corrected</text><path d="M190 340 H735 V312 H755 V340 H1160" class="warn"/><text x="680" y="300" class="txt">data-bit injection</text>
+  <text x="35" y="390" class="label">ACC active</text><path d="M190 400 H710 V372 H920 V400 H1160" class="event"/>
+  <text x="35" y="450" class="label">ACC done / IRQ</text><path d="M190 460 H915 V432 H945 V460 H1160" class="event"/><text x="945" y="425" class="txt">result = −10</text>
+  <text x="35" y="510" class="label">UART accepted</text><path d="M190 520 H955 l10 -28 10 28 h35 l10 -28 10 28 h35 l10 -28 10 28 h35 l10 -28 10 28 h20" class="sig"/><text x="952" y="485" class="txt">P  A  S  S  \n</text>
+  <text x="35" y="570" class="txt">Invariant: the corrected memory read must produce the same −10 result as an error-free read; any uncorrectable pulse fails the test.</text>
+</svg>

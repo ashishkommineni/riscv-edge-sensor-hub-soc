@@ -1,0 +1,5 @@
+PASS
+SOC_TEST_PASS result=-10 uart=PASS dma=1 acc=1 irq=1 ecc_corrected=1 cycles=<simulator-dependent>
+
+The cycle count is intentionally not frozen because simulator scheduling and
+UART timing parameters can change it. All named functional checks are required.

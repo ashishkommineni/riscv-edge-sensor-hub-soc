@@ -1,0 +1,12 @@
+build/
+obj_dir/
+INCA_libs/
+xcelium.d/
+waves.shm/
+*.log
+*.key
+*.history
+results/*.vcd
+results/xcelium/
+__pycache__/
+*.pyc
