@@ -38,17 +38,20 @@ Known waivers:
 
 ## Captured portable release run
 
-The public [GitHub Actions run 39377346961](https://github.com/ashishkommineni/riscv-edge-sensor-hub-soc/actions/runs/39377346961)
+The public [GitHub Actions run 39386393510](https://github.com/ashishkommineni/riscv-edge-sensor-hub-soc/actions/runs/39386393510)
 completed successfully on 2026-10-20 with Verilator 5.020. Its relevant output
 was:
 
 ```text
 PASS reference model: firmware=35_words uart=PASS result=-10 irq_mask=0x1f
 PASS SECDED model: clean + 195 single-bit corrections + 5 double-bit detections
+UVM_SOURCE_SYNTAX_PASS units=3 parser=pyslang-12.0.0
 SOC_TEST_PASS result=-10 uart=PASS dma=1 acc=1 irq=1 ecc_corrected=1 cycles=215
-ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried
+ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried ecc_overwrite=clean partial_uncorrectable=blocked
 ```
 
+The lint and simulation transcript contained zero Verilator warnings and zero
+errors. The parser result proves source syntax only; it is not an Xcelium run.
 The cycle count is evidence for this commit and test configuration, not an
 architectural latency guarantee. The Xcelium/UVM and sign-off rows remain
 explicitly unverified rather than inheriting the portable Verilator result.
