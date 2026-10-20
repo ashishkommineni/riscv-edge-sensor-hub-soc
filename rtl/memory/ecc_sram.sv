@@ -147,7 +147,10 @@ module ecc_sram #(
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       write_collision <= 1'b0;
-      for (i = 0; i < WORDS; i = i + 1) mem[i] <= encode(32'b0);
+      // Blocking assignment is intentional in this reset loop. It gives the
+      // same post-edge state and is accepted by portable Verilator releases
+      // that reject delayed assignments to unpacked arrays inside loops.
+      for (i = 0; i < WORDS; i = i + 1) mem[i] = encode(32'b0);
     end else begin
       write_collision <= !inj_valid && cpu_req && cpu_we && eng_req && eng_we;
       if (inj_valid) begin
