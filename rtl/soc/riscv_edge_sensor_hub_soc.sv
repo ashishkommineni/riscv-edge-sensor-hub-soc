@@ -165,15 +165,20 @@ module riscv_edge_sensor_hub_soc #(
       eng_wdata = acc_mem_wdata;
       eng_wstrb = acc_mem_wstrb;
     end
-    eng_addr_valid = (eng_addr >= SRAM_BASE) &&
-                     (eng_addr < (SRAM_BASE + SRAM_WORDS*4)) &&
-                     (eng_addr[1:0] == 2'b00);
-    sram_eng_req = eng_req && eng_addr_valid;
-    eng_ready = eng_req && (eng_addr_valid ? sram_eng_ready : 1'b1);
-    eng_error = eng_req && (!eng_addr_valid || eng_unc);
-    dma_mem_ready = dma_mem_req && eng_ready;
-    acc_mem_ready = acc_mem_req && !dma_mem_req && eng_ready;
   end
+
+  // Keep response routing separate from the request mux. Besides making the
+  // direction of the handshake explicit, this prevents tools from treating an
+  // always_comb block's complete sensitivity set as a false combinational loop
+  // through the SRAM decode outputs.
+  assign eng_addr_valid = (eng_addr >= SRAM_BASE) &&
+                          (eng_addr < (SRAM_BASE + SRAM_WORDS*4)) &&
+                          (eng_addr[1:0] == 2'b00);
+  assign sram_eng_req = eng_req && eng_addr_valid;
+  assign eng_ready = eng_req && (eng_addr_valid ? sram_eng_ready : 1'b1);
+  assign eng_error = eng_req && (!eng_addr_valid || eng_unc);
+  assign dma_mem_ready = dma_mem_req && eng_ready;
+  assign acc_mem_ready = acc_mem_req && !dma_mem_req && eng_ready;
 
   logic [31:0] irq_rdata;
   logic irq_ready;
