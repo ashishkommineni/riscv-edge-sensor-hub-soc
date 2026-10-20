@@ -1,5 +1,7 @@
 # RISC-V Reliable Edge Sensor Hub SoC
 
+[![RTL and reference checks](https://github.com/ashishkommineni/riscv-edge-sensor-hub-soc/actions/workflows/ci.yml/badge.svg)](https://github.com/ashishkommineni/riscv-edge-sensor-hub-soc/actions/workflows/ci.yml)
+
 A firmware-controlled SystemVerilog SoC demonstrator that moves asynchronous
 SPI sensor samples into SECDED-protected memory, processes them with a signed
 INT8 dot-product engine, raises interrupts, and reports completion over UART.

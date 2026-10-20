@@ -1,5 +1,12 @@
-PASS
-SOC_TEST_PASS result=-10 uart=PASS dma=1 acc=1 irq=1 ecc_corrected=1 cycles=<simulator-dependent>
+Required portable output contract:
+  PASS
+  SOC_TEST_PASS result=-10 uart=PASS dma=1 acc=1 irq=1 ecc_corrected=1 cycles=<value>
+  ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried
 
-The cycle count is intentionally not frozen because simulator scheduling and
-UART timing parameters can change it. All named functional checks are required.
+Verified on GitHub Actions run 39377346961 with Verilator 5.020:
+  SOC_TEST_PASS result=-10 uart=PASS dma=1 acc=1 irq=1 ecc_corrected=1 cycles=215
+  ECC_CONTENTION_TEST_PASS cpu_write=preserved engine_write=retried
+
+The cycle count is intentionally not part of the architectural contract because
+memory/UART timing parameters can change it. All named functional checks are
+required.
