@@ -17,7 +17,7 @@ module uart_tx_mmio #(
   output logic        accepted_strobe
 );
   localparam int CW = (CLKS_PER_BIT <= 2) ? 1 : $clog2(CLKS_PER_BIT);
-  localparam logic [CW-1:0] LAST_COUNT = CLKS_PER_BIT - 1;
+  localparam logic [CW-1:0] LAST_COUNT = CW'(CLKS_PER_BIT - 1);
   logic [9:0] frame;
   logic [3:0] bit_index;
   logic [CW-1:0] count;
